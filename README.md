@@ -14,3 +14,28 @@ style-loader 是将css-loader处理后的文件 在html文件中新建style标�
 --progress 用来看到打包过程
 --display-modules  会将打包的所有模块列出来  并且把用什么loader处理也会列出来
 --display-reasons  写出原因  为什么打包这个模块
+
+-----------------------------------------
+# 配置webpack.config.js
+* 在命令行中，直接webpack  会自动执行webpack.config.js 
+* 如果指定了其它配置文件   webpack --config webpack.xxx.config.js
+* 可以在node的packjson中指定   webpack 的 多个命令行参数  "webpack":"webpack --config webpack.config.js --progress --display-modules --colors --display-reasons"
+* path.resolve() 方法会把一个路径或路径片段的序列解析为一个绝对路径。
+给定的路径的序列是从右往左被处理的，后面每个 path 被依次解析，直到构造完成一个绝对路径。
+到绝对路径就停止，如果没有解析到绝对路径或者path长度为0，返回当前工作路径
+* 在webpack新版本中 output的path必须是绝对路径
+# entry 
+* 单个字符串 "./src/script/main.js"   添加多种依赖
+* 数组 ["./src/script/main.js","./src/script/a.js"] 两个文件属于平行关系不互相依赖打包到一起  只对应一个输出文件时，会合并到同一个文件  都被视为单个的输入
+* 对象   key chunkname  value    在多页面中使用   在新版本的webpack中  不能给一个输出文件里打包  需要使用[name] 
+> 通过多个入口点，代码拆分或各种插件创建多个包时，使用output占位  （写到一个会被覆盖）
+```
+  {
+         main:"./src/script/main.js",    
+         a:"./src/script/a.js"
+    }
+```
+# output
+* filename
+
+> [name]key Chunk Names [hash] 打包第一行 本次打包hash [chunkhash]  文件中的hash值是不一样的 和这次 打包的hash值也是不一样的   可以认为是这个文件的版本号 也可以认为是md5值  保证文件的唯一性  只有当这个文件改变时 值才会改变   在上线时很有用 [id] chunk值  模块id 
