@@ -39,3 +39,42 @@ style-loader 是将css-loader处理后的文件 在html文件中新建style标�
 * filename
 
 > [name]key Chunk Names [hash] 打包第一行 本次打包hash [chunkhash]  文件中的hash值是不一样的 和这次 打包的hash值也是不一样的   可以认为是这个文件的版本号 也可以认为是md5值  保证文件的唯一性  只有当这个文件改变时 值才会改变   在上线时很有用 [id] chunk值  模块id 
+
+* publicPath  "/asset/" => http://localhost:63342/asset/js/main-0.js  会放到服务器下的根路径中的asset文件夹中
+
+# 采用插件的原因
+如果用hash打包 每次都不确定，在index.html中引用很麻烦，这里采用插件
+html-webpack-plugin
+```
+context:""  //整个运行环境的上下文    默认为运行这个脚本的目录     因为此脚本一般在根目录下运行
+ plugins:[
+        //可以传参  参数是一个{}
+        new htmlWebpackPlugin({
+                filename:"index.html" //指定生成的filename
+                template:"index.html" //路径 与上下文有关  
+                inject:"head"  //指定生成的js引用是放在 头部还是body标签中  false 不生成
+                minify: {       // 压缩代码
+                        removeComments: true, // 删除注释
+                        collapseWhitespace: true // 删除空格
+                 }
+        })
+        
+    ]
+```
+直接使用，会生成index.html  并将入口文件打包生成的js引入
+* 1、插件生成的index.html与自动生成的js关联起来   （通过实例化插件  即可完成）
+* 2、根目录下的初始化定义好的index.html文件与插件生成的关联  （以根目录下的index.html为模板生成dist目录下的index.html   template可以实现   这时已经可以不再模板中指定src路径  让其自动生成）
+* 3、plugin生成的文件是根据output中path指定的，所有生成的文件都在dist/js目录下  需要重新设置output  path与filename
+* 4、在插件中传参 在模板中引用   支持ejs模板引擎  在模板中htmlWebpackPlugin.options.title
+在htmlWebpackPlugin中有files、options两个key
+files更多的是与entry相关 通过这个可以修改模板中的js在头部还是body 
+￼
+options更多是与其插件自身配置相关  里面有所有的参数
+* 5、对文件进行压缩 使用到
+# 处理多页面应用
+通过再次调用插件，来达到生成多个页面的应用   
+* 1、直接调用时，每次页面中的引用都是一样的  
+* 2、要想给每个页面单独定义  需要设置chunks这个项 chunks:["a"]
+* 3、 当一个页面中所包含的的chunks多得时候，单独使用chunks这个项就会很麻烦 使用另一个项excludeChunks :[]  忽略哪几项之外的所有 
+# 将初始化的脚本直接嵌入页面 而不是引用页面的方法 来提供最佳性能
+以in_line的形式  compilation.assets  webpack自身的一个引用

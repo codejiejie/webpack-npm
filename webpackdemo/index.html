@@ -5,9 +5,16 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>webpackdemo</title>
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <script type="text/javascript">
+        <%= compilation.assets[htmlWebpackPlugin.files.chunks.main.entry.substr(htmlWebpackPlugin.files.publicPath.length)].source() %>
+    </script>
 </head>
 <body>
-<script src="bundle.js"></script>
+<% for(var key in htmlWebpackPlugin.files.chunks){%>
+    <% if(key!=="main"){%>
+    <script src="<%=htmlWebpackPlugin.files.chunks[key].entry%>"></script>
+    <%}%>
+<%}%>
 </body>
 </html>
