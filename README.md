@@ -78,3 +78,53 @@ options更多是与其插件自身配置相关  里面有所有的参数
 * 3、 当一个页面中所包含的的chunks多得时候，单独使用chunks这个项就会很麻烦 使用另一个项excludeChunks :[]  忽略哪几项之外的所有 
 # 将初始化的脚本直接嵌入页面 而不是引用页面的方法 来提供最佳性能
 以in_line的形式  compilation.assets  webpack自身的一个引用
+
+# babel-loader
+> 用来将javascript的es6语法解析成浏览器可以识别的语言
+* 在使用之前，都会给其做一个配置 .babelrc文件
+
+> npm install babel-preset-env --save-dev  用来指定所有的es6语法转换
+这里要注意win7的安装报错
+
+￼
+
+* 影响打包速度的问题
+
+> 解决办法：使用include、exclude
+
+
+￼
+
+
+￼
+
+#css-loader
+将有.css结尾的文件引入到入口文件  解析成js模块引入   
+#style-loader
+在生成的index.html文件中 插入style标签  引入样式
+#postcss-loader及其插件
+* postcss-import 来处理@import
+* autoprefixer 来添加浏览器前缀
+# less-loader 
+> less-loader需要依赖less
+# 模板文件处理
+ 1、将模板文件当做字符串
+html-loader
+*  注意事项：
+
+> 1.html-webpack-plugin 会和 html-loader冲突，如果引入html-loader 会导致<%=htmlWebpackPlugin.options.title %> 编译不出。
+  2.inject: 'body'不能写成head,那样获取不到app这个id,因为<div id='app'></div>是在body中。
+  3.编译后不会再 ./dist/index.html中显示，但在浏览器中可以显示。
+  
+2、通过webpack将模板弄成编译好的处理函数  ejs-loader  将html后缀名改为.tpl
+在使用时，就是在调用函数   传入模板中需要使用的数据
+#图片以及其他文件处理
+* 1、css中有背景文件
+
+>  处理图片    在css中处理相对路径的url， file-loader会将图片打包，并且在url中配置成绝对路径 
+* 2、模板结构（组件）中会引入一张图片  （tpl）   img标签
+如果写相对路径  就要写成  <img src="${require("../../assets/11.jpg")}" alt="">
+* 3、对底层的模板文件对一张图片进行引用   在css中处理相对路径的url， file-loader会将图片打包，并且在url中配置成绝对路径
+* 4、改变打包图片文件的输出地址  指定参数  name
+* 5、url-loader  与file-loader是很类似的  但是可以指定limit参数  文件小于limit时，将文件转为base64编码
+* 6、image-loader   $ npm install image-webpack-loader --save-dev  用来压缩图片

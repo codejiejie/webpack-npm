@@ -1,0 +1,13 @@
+.flex {
+  display: flex;
+}
+.layer {
+  width: 400px;
+  height: 400px;
+  background: green;
+}
+.layer > div {
+  width: 239px;
+  height: 299px;
+  background: url("../../assets/11.jpg");
+}
